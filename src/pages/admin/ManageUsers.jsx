@@ -1,28 +1,27 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search } from "../../components/common/Icons";
 import UserTable from "../../components/admin/UserTable";
 import Modal from "../../components/common/Modal";
 import { mockUser } from "../../utils/mockUsers";
+import axios from "axios";
 
 const roleFilters = ["all", "customer", "admin"];
 
 export default function ManageUsers() {
     // TODO: replace with data fetched from GET /getallusers
-    const [users, setUsers] = useState(mockUser);
+    const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [roleFilter, setRoleFilter] = useState("all");
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [deleting, setDeleting] = useState(false);
 
-    const filtered = useMemo(() => {
-        return users.filter((u) => {
-            const matchesSearch =
-                u.name.toLowerCase().includes(search.toLowerCase()) ||
-                u.email.toLowerCase().includes(search.toLowerCase());
-            const matchesRole = roleFilter === "all" || u.role === roleFilter;
-            return matchesSearch && matchesRole;
-        });
-    }, [users, search, roleFilter]);
+    useEffect(()=>{
+        async function getUsers(){
+            let data = await axios.get('http://localhost:5000/allusers')
+            setUsers(data.data.userData)
+        }
+        getUsers()
+    },[])
 
     const handleDelete = () => {
         setDeleting(true);
@@ -69,7 +68,7 @@ export default function ManageUsers() {
                 </div>
             </div>
 
-            <UserTable users={filtered} onDeleteClick={setDeleteTarget} />
+            <UserTable users={users} onDeleteClick={setDeleteTarget} />
 
             <Modal
                 open={!!deleteTarget}

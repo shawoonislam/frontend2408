@@ -93,7 +93,7 @@ export default function Profile() {
                     {userInfo?.name}
                 </div>
                 <div>
-                    <h1 className="font-display text-2xl font-semibold text-ink">{form.name}</h1>
+                 
                     <p className="text-sm text-slate">
                         Member since {new Date(form.joined).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
                     </p>

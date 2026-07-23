@@ -6,6 +6,7 @@ import InputField from "../../components/common/InputField";
 import Button from "../../components/common/Button";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
+import { FidgetSpinner } from "react-loader-spinner";
 
 function getPasswordStrength(password) {
     if (!password) return { label: "", width: "0%", color: "" };
@@ -60,6 +61,7 @@ export default function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true)
         const errs = validate();
         if (Object.keys(errs).length) return setErrors(errs);
 
@@ -68,6 +70,7 @@ export default function Register() {
         // TODO: connect to POST /registration
         try {
             let data = await axios.post('http://localhost:5000/registration',form)
+            setLoading(false)
             navigate('/login')
         } catch (err) {
             setLoading(false);
@@ -77,6 +80,7 @@ export default function Register() {
 
     return (
         <AuthLayout title="Create your account" subtitle="Start shopping in a couple of minutes.">
+        
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <InputField
                     label="Full name"
@@ -138,10 +142,25 @@ export default function Register() {
                 {submitError && (
                     <p className="text-sm text-red-500 text-center bg-red-50 py-2 rounded-lg">{submitError}</p>
                 )}
-
+   
+                {loading 
+                ? 
+                <Button  className="mt-1 disabled:bg-gray-400">
+                      <FidgetSpinner
+                        visible={true}
+                        height="40"
+                        width="40"
+                        ariaLabel="fidget-spinner-loading"
+                        wrapperStyle={{}}
+                        wrapperClass="fidget-spinner-wrapper"
+                    />
+                </Button>
+                
+                :
                 <Button type="submit" loading={loading} className="mt-1">
                     Create Account
                 </Button>
+                }
             </form>
 
             <div className="flex items-center gap-3 my-6">

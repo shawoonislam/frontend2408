@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router";
 import AuthLayout from "../../layouts/AuthLayout";
+import axios from "axios";
 
 export default function VerifyEmail() {
     const { token } = useParams();
     const [status, setStatus] = useState("verifying"); // verifying | success | error
 
     useEffect(() => {
-        // TODO: connect to POST /verifyemail/:token
         console.log("Verifying token:", token);
-        const timer = setTimeout(() => setStatus("success"), 1200);
-        return () => clearTimeout(timer);
+        let data = axios.post(`http://localhost:5000/verifyemail/${token}`)
+        setStatus("success")
     }, [token]);
 
     return (
@@ -20,7 +20,7 @@ export default function VerifyEmail() {
                     ? "Verifying your email..."
                     : status === "success"
                         ? "Email verified"
-                        : "Verification failed"
+                    : "Verification failed"
             }
             subtitle={
                 status === "verifying"

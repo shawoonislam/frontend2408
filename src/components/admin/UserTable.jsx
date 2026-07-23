@@ -26,6 +26,7 @@ function StatusBadge({ status }) {
 }
 
 export default function UserTable({ users, onDeleteClick }) {
+
   if (users.length === 0) {
     return (
       <div className="text-center py-16 bg-white rounded-xl border border-ink/10">
@@ -33,6 +34,8 @@ export default function UserTable({ users, onDeleteClick }) {
       </div>
     );
   }
+
+
 
   return (
     <div className="bg-white rounded-xl border border-ink/10 overflow-hidden">
@@ -66,9 +69,9 @@ export default function UserTable({ users, onDeleteClick }) {
                   </td>
                   <td className="px-5 py-3 text-slate">{user.phone}</td>
                   <td className="px-5 py-3"><RoleBadge role={user.role} /></td>
-                  <td className="px-5 py-3"><StatusBadge status={user.status} /></td>
+                  <td className="px-5 py-3"><StatusBadge status={user.isHold ? "deactive":"active"} /></td>
                   <td className="px-5 py-3 text-slate">
-                    {new Date(user.joined).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
+                    {new Date(user.createdAt).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-end gap-2">

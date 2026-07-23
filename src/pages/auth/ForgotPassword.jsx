@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import AuthLayout from "../../layouts/AuthLayout";
 import InputField from "../../components/common/InputField";
 import Button from "../../components/common/Button";
+import axios from "axios";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -10,12 +11,14 @@ export default function ForgotPassword() {
     const [loading, setLoading] = useState(false);
     const [sent, setSent] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!email) return setError("Email is required");
         if (!/\S+@\S+\.\S+/.test(email)) return setError("Enter a valid email");
 
-        console.log("email",email)
+        let data = await axios.post('http://localhost:5000/forgotpassword',{
+            email: email
+        })
         
     };
 

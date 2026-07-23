@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router";
 import AuthLayout from "../../layouts/AuthLayout";
 import InputField from "../../components/common/InputField";
 import Button from "../../components/common/Button";
+import axios from "axios";
 
 export default function ResetPassword() {
     const { token } = useParams();
@@ -24,18 +25,18 @@ export default function ResetPassword() {
         return errs;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("hello")
         const errs = validate();
         if (Object.keys(errs).length) return setErrors(errs);
 
-        setLoading(true);
+        // setLoading(true);
         // TODO: connect to POST /resetpassword/:token
         console.log("Reset password submit:", { token, ...form });
-        setTimeout(() => {
-            setLoading(false);
-            navigate("/login");
-        }, 800);
+        let data = await axios.post(`http://localhost:5000/resetpassword/${token}`,form)
+        console.log(data)
+      
     };
 
     return (

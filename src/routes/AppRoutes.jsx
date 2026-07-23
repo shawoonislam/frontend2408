@@ -56,7 +56,7 @@ const router = createBrowserRouter([
             {
                 path: "",
                 element: (
-                    <ProtectedRoute allowedRoles={["customer", "manager", "admin"]}>
+                    <ProtectedRoute allowedRoles={["user", "manager", "admin"]}>
                         <AccountLayout />
                     </ProtectedRoute>
                 ),
@@ -108,7 +108,8 @@ const router = createBrowserRouter([
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
     { path: "/forgot-password", element: <ForgotPassword /> },
-    { path: "/reset-password/:token", element: <ResetPassword /> },
+    { path: "/verifyemail/:token", element: <VerifyEmail /> },
+    { path: "/resetpassword/:token", element: <ResetPassword /> },
     { path: "/verify-email/:token", element: <VerifyEmail /> },
     { path: "/resend-verification", element: <ResendVerification /> },
 ]);

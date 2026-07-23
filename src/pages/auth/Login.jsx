@@ -41,8 +41,11 @@ export default function Login() {
         // TODO: connect to POST /login
         try {
             let data = await axios.post('http://localhost:5000/login',form)
-            localStorage.setItem('userinfo', JSON.stringify(data.data.data))
-            navigate('/')
+          
+            if(data.data.success){
+                localStorage.setItem('userinfo', JSON.stringify(data.data.data))
+                navigate('/')
+            }
         } catch (err) {
             setLoading(false);
             setSubmitError(err.message);
