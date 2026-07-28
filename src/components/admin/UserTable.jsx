@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { Eye, Trash2 } from "../common/Icons";
+import axios from "axios";
 
 function RoleBadge({ role }) {
   return (
@@ -25,7 +26,7 @@ function StatusBadge({ status }) {
   );
 }
 
-export default function UserTable({ users, onDeleteClick }) {
+export default function UserTable({ users, handleDelete,handleActive }) {
 
   if (users.length === 0) {
     return (
@@ -35,6 +36,7 @@ export default function UserTable({ users, onDeleteClick }) {
     );
   }
 
+  
 
 
   return (
@@ -81,12 +83,22 @@ export default function UserTable({ users, onDeleteClick }) {
                       >
                         <Eye size={15} />
                       </Link>
+                      {user.isDelete
+                      ?
                       <button
-                        onClick={() => onDeleteClick(user)}
+                        onClick={() => handleActive(user._id)}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-ink/50 hover:bg-red-50 hover:text-red-500 transition-colors"
+                      >
+                        Active
+                      </button>
+                      :
+                      <button
+                        onClick={() => handleDelete(user._id)}
                         className="w-8 h-8 rounded-lg flex items-center justify-center text-ink/50 hover:bg-red-50 hover:text-red-500 transition-colors"
                       >
                         <Trash2 size={15} />
                       </button>
+                      }
                     </div>
                   </td>
                 </tr>

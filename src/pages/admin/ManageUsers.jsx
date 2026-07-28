@@ -5,7 +5,7 @@ import Modal from "../../components/common/Modal";
 import { mockUser } from "../../utils/mockUsers";
 import axios from "axios";
 
-const roleFilters = ["all", "customer", "admin"];
+const roleFilters = ["all", "customer", "DUser"];
 
 export default function ManageUsers() {
     // TODO: replace with data fetched from GET /getallusers
@@ -14,6 +14,7 @@ export default function ManageUsers() {
     const [roleFilter, setRoleFilter] = useState("all");
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [deleting, setDeleting] = useState(false);
+    
 
     useEffect(()=>{
         async function getUsers(){
@@ -23,16 +24,47 @@ export default function ManageUsers() {
         getUsers()
     },[])
 
-    const handleDelete = () => {
-        setDeleting(true);
-        // TODO: connect to DELETE /deleteuser/:id
-        console.log("Delete user:", deleteTarget._id);
-        setTimeout(() => {
-            setUsers((prev) => prev.filter((u) => u._id !== deleteTarget._id));
-            setDeleting(false);
-            setDeleteTarget(null);
-        }, 500);
-    };
+
+        let handleDelete = async (id)=>{
+            await axios.delete(`http://localhost:5000/deleteuser/${id}`)
+            
+            let data = await axios.get('http://localhost:5000/allusers')
+            setUsers(data.data.userData)
+        }
+
+        let handleDeleteUser = async ()=>{
+            
+             let data = await axios.get('http://localhost:5000/alldeleteusers')
+            setUsers(data.data.userData)
+        }
+        let handleActiveUser = async ()=>{
+            
+             let data = await axios.get('http://localhost:5000/allusers')
+            setUsers(data.data.userData)
+        }
+
+        let handleActive = async (id)=>{
+
+            await axios.post(`http://localhost:5000/update/${id}`,{
+                isDelete: false
+
+            })
+
+            let data = await axios.get('http://localhost:5000/allusers')
+            setUsers(data.data.userData)
+
+        }
+
+        let handleSearch = async ()=>{
+            console.log(search.toLowerCase())
+
+            let data = await axios.post('http://localhost:5000/search',{
+                name: search
+            }) 
+            console.log(data)
+            
+        }
+
 
     return (
         <div>
@@ -46,29 +78,32 @@ export default function ManageUsers() {
                     <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate/50" />
                     <input
                         type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        // value={search}
+                        onChange={(e)=> setSearch(e.target.value)}
                         placeholder="Search by name or email..."
                         className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-ink/15 bg-white text-sm
               focus:outline-none focus:ring-4 focus:ring-amber/15 focus:border-amber transition-all"
                     />
+                    <button onClick={handleSearch}>search</button>
                 </div>
 
                 <div className="flex gap-2">
-                    {roleFilters.map((role) => (
-                        <button
-                            key={role}
-                            onClick={() => setRoleFilter(role)}
-                            className={`px-4 py-2 rounded-lg text-xs font-semibold capitalize transition-colors ${roleFilter === role ? "bg-ink text-paper" : "bg-white border border-ink/15 text-ink/60 hover:bg-ink/5"
-                                }`}
+                     <button
+                            onClick={handleActiveUser}
+                            className={`px-4 py-2 rounded-lg text-xs font-semibold capitalize transition-colors`}
                         >
-                            {role}
+                            Auser
                         </button>
-                    ))}
+                     <button
+                            onClick={handleDeleteUser}
+                            className={`px-4 py-2 rounded-lg text-xs font-semibold capitalize transition-colors`}
+                        >
+                            Duser
+                        </button>
                 </div>
             </div>
 
-            <UserTable users={users} onDeleteClick={setDeleteTarget} />
+            <UserTable users={users} handleDelete={handleDelete} handleActive={handleActive} onDeleteClick={setDeleteTarget} />
 
             <Modal
                 open={!!deleteTarget}
