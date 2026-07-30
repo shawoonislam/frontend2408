@@ -88,7 +88,7 @@ export default function Login() {
                 </div>
 
                 {submitError && (
-                    <p className="text-sm text-red-500 text-center bg-red-50 py-2 rounded-lg">{submitError}</p>
+                    <p className="py-2 text-sm text-center text-red-500 rounded-lg bg-red-50">{submitError}</p>
                 )}
 
                 <Button type="submit" className="mt-1">
@@ -97,28 +97,28 @@ export default function Login() {
             </form>
 
             <div className="flex items-center gap-3 my-6">
-                <div className="h-px bg-ink/10 flex-1" />
+                <div className="flex-1 h-px bg-ink/10" />
                 <span className="text-xs text-slate/60">OR</span>
-                <div className="h-px bg-ink/10 flex-1" />
+                <div className="flex-1 h-px bg-ink/10" />
             </div>
 
-            <p className="text-sm text-slate text-center">
+            <p className="text-sm text-center text-slate">
                 Don't have an account?{" "}
-                <Link to="/register" className="text-ink font-semibold hover:underline underline-offset-2">
+                <Link to="/register" className="font-semibold text-ink hover:underline underline-offset-2">
                     Register
                 </Link>
             </p>
 
             {/* DEV ONLY — remove once real backend auth is wired */}
-            <div className="mt-8 pt-6 border-t border-dashed border-ink/15">
-                <p className="text-xs text-slate/50 text-center mb-3">Dev quick login (testing only)</p>
+            <div className="pt-6 mt-8 border-t border-dashed border-ink/15">
+                <p className="mb-3 text-xs text-center text-slate/50">Dev quick login (testing only)</p>
                 <div className="grid grid-cols-3 gap-2">
                     {["customer", "manager", "admin"].map((role) => (
                         <button
                             key={role}
                             type="button"
                             onClick={() => handleDevLogin(role)}
-                            className="py-2 rounded-lg text-xs font-semibold capitalize border border-ink/15 text-ink/60 hover:bg-ink/5 transition-colors"
+                            className="py-2 text-xs font-semibold capitalize transition-colors border rounded-lg border-ink/15 text-ink/60 hover:bg-ink/5"
                         >
                             {role}
                         </button>

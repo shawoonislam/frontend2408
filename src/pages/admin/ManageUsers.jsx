@@ -61,25 +61,43 @@ export default function ManageUsers() {
             let data = await axios.post('http://localhost:5000/search',{
                 name: search
             }) 
-            console.log(data)
+            setUsers(data.data.userData)
             
+        }
+
+        let handleSearchChange = async (e)=> {
+            if(!e.target.value){
+                let data = await axios.get('http://localhost:5000/allusers')
+                setUsers(data.data.userData)
+            }
+            setSearch(e.target.value)
+        }
+
+        let handleKeyDown = async (e)=>{
+            if(e.key == 'Enter'){
+                let data = await axios.post('http://localhost:5000/search',{
+                name: search
+            }) 
+            setUsers(data.data.userData)
+            }
         }
 
 
     return (
         <div>
             <div className="mb-6">
-                <h1 className="font-display text-2xl font-semibold text-ink">Users</h1>
-                <p className="text-sm text-slate mt-1">{users.length} registered users</p>
+                <h1 className="text-2xl font-semibold font-display text-ink">Users</h1>
+                <p className="mt-1 text-sm text-slate">{users.length} registered users</p>
             </div>
 
-            <div className="flex items-center gap-3 flex-wrap mb-5">
+            <div className="flex flex-wrap items-center gap-3 mb-5">
                 <div className="relative flex-1 max-w-sm">
                     <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate/50" />
                     <input
                         type="text"
                         // value={search}
-                        onChange={(e)=> setSearch(e.target.value)}
+                        onChange={handleSearchChange}
+                        onKeyDown={handleKeyDown}
                         placeholder="Search by name or email..."
                         className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-ink/15 bg-white text-sm
               focus:outline-none focus:ring-4 focus:ring-amber/15 focus:border-amber transition-all"
@@ -113,14 +131,14 @@ export default function ManageUsers() {
                     <>
                         <button
                             onClick={() => setDeleteTarget(null)}
-                            className="px-4 py-2 rounded-lg text-sm font-medium text-ink/70 hover:bg-ink/5 transition-colors"
+                            className="px-4 py-2 text-sm font-medium transition-colors rounded-lg text-ink/70 hover:bg-ink/5"
                         >
                             Cancel
                         </button>
                         <button
                             onClick={handleDelete}
                             disabled={deleting}
-                            className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-60"
+                            className="px-4 py-2 text-sm font-semibold text-white transition-colors bg-red-500 rounded-lg hover:bg-red-600 disabled:opacity-60"
                         >
                             {deleting ? "Deleting..." : "Delete"}
                         </button>
