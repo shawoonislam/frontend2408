@@ -1,15 +1,15 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo,useEffect } from "react";
 import { Link } from "react-router";
 import { Search, Plus } from "../../components/common/Icons";
 import ProductTable from "../../components/admin/ProductTable";
 import Modal from "../../components/common/Modal";
 import { mockProducts } from "../../utils/mockProducts";
-
+import axios from "axios";
 const statusFilters = ["all", "active", "pending", "inactive"];
 
 export default function ManageProducts() {
     // TODO: replace with data fetched from GET /get-all-products
-    const [products, setProducts] = useState(mockProducts);
+    const [products, setProducts] = useState([]);
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [deleteTarget, setDeleteTarget] = useState(null);
@@ -35,6 +35,18 @@ export default function ManageProducts() {
             setDeleteTarget(null);
         }, 500);
     };
+
+    useEffect(() => {
+        async function fetchProducts() {
+            let data = await axios.get("http://localhost:5000/get-all-products");
+            setProducts(data.data.product);
+            ``
+        }
+
+        fetchProducts();
+    }, []);
+
+
 
     return (
         <div>

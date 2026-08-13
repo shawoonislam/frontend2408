@@ -31,7 +31,7 @@ export default function ImageUploader({ images, onChange }) {
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
                 {images.map((img, i) => (
                     <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-ink/10 group">
-                        <img src={img.preview || img.url} alt={`Product ${i + 1}`} className="w-full h-full object-cover" />
+                        <img src={img.preview || `http://localhost:5000/${img.url}`} alt={`Product ${i + 1}`} className="w-full h-full object-cover" />
 
                         <button
                             type="button"

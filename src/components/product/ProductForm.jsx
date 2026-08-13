@@ -1,13 +1,25 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo,useEffect } from "react";
 import InputField from "../common/InputField";
 import Button from "../common/Button";
 import ImageUploader from "./ImageUploader";
 import { categories } from "../../utils/mockCategories";
+import axios from "axios";
 
 const statusOptions = ["pending", "active", "inactive"];
 const discountTypes = ["none", "percentage", "flat"];
 
 export default function ProductForm({ initialData, onSubmit, submitLabel = "Save Product" }) {
+    let [categories, setCategories] = useState([])
+
+    useEffect(()=>{
+        async function fetchCategories() {
+            let data = await axios.get("http://localhost:5000/getcategory");
+            setCategories(data.data.categories);
+            console.log(data.data.categories)
+        }
+        fetchCategories();
+    }, []);
+
     const [form, setForm] = useState({
         title: initialData?.title || "",
         sku: initialData?.sku || "",
@@ -15,16 +27,17 @@ export default function ProductForm({ initialData, onSubmit, submitLabel = "Save
         description: initialData?.description || "",
         price: initialData?.price ?? "",
         stock: initialData?.stock ?? "",
-        category: initialData?.category || categories[0].name,
+        category: initialData?.category || "",
         brand: initialData?.brand || "",
-        additionalInformation: initialData?.additionalInformation || "",
+        additionalInformation: initialData?.additionalInfo || "",
         status: initialData?.status || "pending",
-        tags: initialData?.tags?.join(", ") || "",
-        discountType: initialData?.discountPrice?.type || "none",
-        discountValue: initialData?.discountPrice?.value || "",
-        discountStart: initialData?.discountPrice?.startDate?.slice(0, 10) || "",
-        discountEnd: initialData?.discountPrice?.endDate?.slice(0, 10) || "",
+        tag: initialData?.tag?.join(", ") || "",
+        discountType: initialData?.discountType || "none",
+        discountValue: initialData?.discount || "",
+        discountStart: initialData?.discountStartDate.split("T")[0] || "",
+        discountEnd: initialData?.discountEndDate.split("T")[0] || "",
     });
+    
     const [images, setImages] = useState(
         initialData?.images?.map((img) => ({ url: img.url, isMain: img.isMain })) || []
     );
@@ -103,7 +116,7 @@ export default function ProductForm({ initialData, onSubmit, submitLabel = "Save
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div className="bg-white rounded-xl border border-ink/10 p-5 sm:p-6">
-                <h2 className="font-display text-lg font-semibold text-ink mb-5">Product Images</h2>
+                <h2 className="font-display text-lg font-semibold text-ink mb-5">Product Images </h2>
                 <ImageUploader images={images} onChange={setImages} />
                 {errors.images && <p className="text-xs text-red-500 mt-2">{errors.images}</p>}
             </div>
@@ -116,18 +129,19 @@ export default function ProductForm({ initialData, onSubmit, submitLabel = "Save
                         <InputField label="Product title" name="title" value={form.title} onChange={handleChange} error={errors.title} placeholder="e.g. Wireless Headphones" />
                     </div>
 
-                    <InputField label="SKU" name="sku" value={form.sku} onChange={handleChange} error={errors.sku} placeholder="e.g. ELEC-HEAD-001" />
+                    <InputField disabled label="SKU" name="sku" value={form.sku} onChange={handleChange} error={errors.sku} placeholder="e.g. ELEC-HEAD-001" />
                     <InputField label="Brand" name="brand" value={form.brand} onChange={handleChange} placeholder="e.g. SoundCore" />
 
                     <div>
                         <label className="text-sm font-medium text-ink block mb-1.5">Category</label>
                         <select
                             name="category"
-                            value={form.category}
+                            value={form.category }
                             onChange={handleChange}
                             className="w-full px-3.5 py-2.5 rounded-lg border border-ink/15 bg-white text-sm
                 focus:outline-none focus:ring-4 focus:ring-amber/15 focus:border-amber transition-all"
                         >
+                            <option value="">None</option>
                             {categories.map((cat) => (
                                 <option key={cat.name} value={cat.name}>{cat.name}</option>
                             ))}
@@ -194,8 +208,8 @@ export default function ProductForm({ initialData, onSubmit, submitLabel = "Save
                 <div className="mt-4">
                     <InputField
                         label="Tags (comma separated)"
-                        name="tags"
-                        value={form.tags}
+                        name="tag"
+                        value={form.tag}
                         onChange={handleChange}
                         placeholder="e.g. audio, wireless, noise-cancelling"
                     />
@@ -225,6 +239,7 @@ export default function ProductForm({ initialData, onSubmit, submitLabel = "Save
                                 {discountTypes.map((t) => (
                                     <option key={t} value={t} className="capitalize">{t}</option>
                                 ))}
+                           
                             </select>
                         </div>
 

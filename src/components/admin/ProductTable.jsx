@@ -50,7 +50,13 @@ export default function ProductTable({ products, onDeleteClick }) {
                                     <td className="px-5 py-3">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-lg overflow-hidden bg-ink/5 shrink-0">
-                                                <img src={getMainImage(product)} alt={product.title} className="w-full h-full object-cover" />
+                                            {product.images && product.images.length > 0 && product.images.map((image, index) => (
+                                                 image.isMain && (
+                                                    <img src={`http://localhost:5000/${image.url}`} alt={product.title} className="w-full h-full object-cover" />
+                                                )
+                                               
+                                            ))}
+                                                
                                             </div>
                                             <span className="font-medium text-ink line-clamp-1">{product.title}</span>
                                         </div>
@@ -58,10 +64,9 @@ export default function ProductTable({ products, onDeleteClick }) {
                                     <td className="px-5 py-3 text-slate">{product.sku}</td>
                                     <td className="px-5 py-3 text-slate">{product.category}</td>
                                     <td className="px-5 py-3">
-                                        <span className="text-ink font-medium">৳{product.salePrice.toLocaleString()}</span>
-                                        {hasDiscount && (
-                                            <span className="text-xs text-slate/40 line-through ml-1.5">৳{product.price.toLocaleString()}</span>
-                                        )}
+                                        {/* <span className="text-ink font-medium">৳{product.discount && product.price - product.discount}</span> */}
+                                        <span className="text-ink font-medium">৳{product.discountType === 'flat' ? product.price - product.discount : product.discountType === 'percentage' ? product.price - (product.price*product.discount)/100 : product.price }</span>
+                                        
                                     </td>
                                     <td className="px-5 py-3">
                                         {product.stock === 0 ? (
