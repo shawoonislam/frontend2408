@@ -7,6 +7,8 @@ export default function ImageUploader({
   onChange,
   handleChange,
   setIsMainIndex,
+  setDelete,
+  deleteImage
 }) {
   const inputRef = useRef();
 
@@ -23,7 +25,11 @@ export default function ImageUploader({
     onChange([...images, ...newImages].slice(0, 5));
   };
 
+  let deleteArr = [...deleteImage]
+
   const removeImage = (index) => {
+    deleteArr.push(index)
+    setDelete(deleteArr)
     const wasMain = images[index]?.isMain;
     let next = images.filter((_, i) => i !== index);
     if (wasMain && next.length > 0) next[0] = { ...next[0], isMain: true };

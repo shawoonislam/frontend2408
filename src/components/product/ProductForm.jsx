@@ -4,6 +4,7 @@ import Button from "../common/Button";
 import ImageUploader from "./ImageUploader";
 import { categories } from "../../utils/mockCategories";
 import axios from "axios";
+import { useParams } from "react-router";
 
 const statusOptions = ["pending", "active", "inactive"];
 const discountTypes = ["none", "percentage", "flat"];
@@ -37,13 +38,13 @@ export default function ProductForm({
     status: initialData?.status || "pending",
     tag: initialData?.tag?.join(", ") || "",
     discountType: initialData?.discountType || "none",
-    discountValue: initialData?.discount || "",
-    discountStart: initialData?.discountStartDate.split("T")[0] || "",
-    discountEnd: initialData?.discountEndDate.split("T")[0] || "",
+    discount: initialData?.discount || "",
+    discountStartDate: initialData?.discountStartDate || "",
+    discountEndDate: initialData?.discountEndDate || "",
     images: initialData?.images || "",
-    isMain: 0
+    isMain: initialData?.isMain,
   });
-  let [isMainIndex,setIsMainIndex] = useState(0)
+  let [isMainIndex, setIsMainIndex] = useState(0);
 
   const [images, setImages] = useState(
     initialData?.images?.map((img) => ({ url: img.url, isMain: img.isMain })) ||
@@ -51,6 +52,7 @@ export default function ProductForm({
   );
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
+  let [deleteImage, setDelete] = useState([]);
 
   const handleChange = (e) => {
     console.log(e.target.files);
@@ -65,12 +67,12 @@ export default function ProductForm({
   // Live-calculated sale price preview — mirrors what the backend would compute
   const salePricePreview = useMemo(() => {
     const price = Number(form.price) || 0;
-    const value = Number(form.discountValue) || 0;
+    const value = Number(form.discount) || 0;
     if (form.discountType === "percentage")
       return Math.max(0, price - (price * value) / 100);
     if (form.discountType === "flat") return Math.max(0, price - value);
     return price;
-  }, [form.price, form.discountType, form.discountValue]);
+  }, [form.price, form.discountType, form.discount]);
 
   const validate = () => {
     const errs = {};
@@ -84,21 +86,34 @@ export default function ProductForm({
     // if (images.length === 0) errs.images = "At least one image is required";
     if (
       form.discountType !== "none" &&
-      (!form.discountValue || Number(form.discountValue) <= 0)
+      (!form.discount || Number(form.discount) <= 0)
     ) {
-      errs.discountValue = "Enter a discount value";
+      errs.discount = "Enter a discount value";
     }
     return errs;
   };
+  let params = useParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) return setErrors(errs);
-    console.log(images)
+    console.log(images);
     const formData = new FormData(e.currentTarget);
-
-    let data = await axios.post("http://localhost:5000/createproduct", formData);
+    console.log(deleteImage);
+    if (params.id) {
+      console.log("update");
+      let data = await axios.put(
+        `http://localhost:5000/update-product/${params.id}`,
+        formData,
+      );
+    } else {
+      console.log("hello");
+      let data = await axios.post(
+        "http://localhost:5000/createproduct",
+        formData,
+      );
+    }
   };
 
   return (
@@ -107,8 +122,29 @@ export default function ProductForm({
         <h2 className="font-display text-lg font-semibold text-ink mb-5">
           Product Images{" "}
         </h2>
-        <ImageUploader images={images} onChange={setImages} handleChange={handleChange} setIsMainIndex={setIsMainIndex}/>
-        <input type="string" multiple onChange={handleChange} name="isMain" value={isMainIndex} />
+        <ImageUploader
+          images={images}
+          onChange={setImages}
+          handleChange={handleChange}
+          setIsMainIndex={setIsMainIndex}
+          setDelete={setDelete}
+          deleteImage={deleteImage}
+        />
+        <input
+          hidden
+          type="string"
+          multiple
+          onChange={handleChange}
+          name="isMain"
+          value={isMainIndex}
+        />
+        <input
+          hidden
+          type="string"
+          onChange={handleChange}
+          name="deleteImage"
+          value={deleteImage}
+        />
         {errors.images && (
           <p className="text-xs text-red-500 mt-2">{errors.images}</p>
         )}
@@ -295,11 +331,11 @@ export default function ProductForm({
                       ? "Discount (%)"
                       : "Discount (৳)"
                   }
-                  name="discountValue"
+                  name="discount"
                   type="number"
-                  value={form.discountValue}
+                  value={form.discount}
                   onChange={handleChange}
-                  error={errors.discountValue}
+                  // error={errors.discount}?
                   placeholder="0"
                 />
                 <div className="flex flex-col justify-end">
@@ -318,16 +354,16 @@ export default function ProductForm({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
               <InputField
                 label="Discount start date"
-                name="discountStart"
+                name="discountStartDate"
                 type="date"
-                value={form.discountStart}
+                value={form.discountStartDate}
                 onChange={handleChange}
               />
               <InputField
                 label="Discount end date"
-                name="discountEnd"
+                name="discountEndDate"
                 type="date"
-                value={form.discountEnd}
+                value={form.discountEndDate}
                 onChange={handleChange}
               />
             </div>
