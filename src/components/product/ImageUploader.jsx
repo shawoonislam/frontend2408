@@ -2,7 +2,12 @@ import { useRef } from "react";
 import { ImagePlus, X, Star } from "../common/Icons";
 
 // images: array of { file?, url?, preview?, isMain }
-export default function ImageUploader({ images, onChange, handleChange }) {
+export default function ImageUploader({
+  images,
+  onChange,
+  handleChange,
+  setIsMainIndex,
+}) {
   const inputRef = useRef();
 
   const handleFiles = (fileList) => {
@@ -26,6 +31,7 @@ export default function ImageUploader({ images, onChange, handleChange }) {
   };
 
   const setMain = (index) => {
+    setIsMainIndex(index);
     onChange(images.map((img, i) => ({ ...img, isMain: i === index })));
   };
 

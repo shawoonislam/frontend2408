@@ -41,7 +41,9 @@ export default function ProductForm({
     discountStart: initialData?.discountStartDate.split("T")[0] || "",
     discountEnd: initialData?.discountEndDate.split("T")[0] || "",
     images: initialData?.images || "",
+    isMain: 0
   });
+  let [isMainIndex,setIsMainIndex] = useState(0)
 
   const [images, setImages] = useState(
     initialData?.images?.map((img) => ({ url: img.url, isMain: img.isMain })) ||
@@ -93,8 +95,8 @@ export default function ProductForm({
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) return setErrors(errs);
-    
-     const formData = new FormData(e.currentTarget);
+    console.log(images)
+    const formData = new FormData(e.currentTarget);
 
     let data = await axios.post("http://localhost:5000/createproduct", formData);
   };
@@ -105,8 +107,8 @@ export default function ProductForm({
         <h2 className="font-display text-lg font-semibold text-ink mb-5">
           Product Images{" "}
         </h2>
-        <ImageUploader images={images} onChange={setImages} handleChange={handleChange} />
-        {/* <input type="file" multiple onChange={handleChange} name="images" /> */}
+        <ImageUploader images={images} onChange={setImages} handleChange={handleChange} setIsMainIndex={setIsMainIndex}/>
+        <input type="string" multiple onChange={handleChange} name="isMain" value={isMainIndex} />
         {errors.images && (
           <p className="text-xs text-red-500 mt-2">{errors.images}</p>
         )}
