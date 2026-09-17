@@ -8,7 +8,7 @@ export default function ImageUploader({
   handleChange,
   setIsMainIndex,
   setDelete,
-  deleteImage
+  deleteImage,
 }) {
   const inputRef = useRef();
 
@@ -25,15 +25,16 @@ export default function ImageUploader({
     onChange([...images, ...newImages].slice(0, 5));
   };
 
-  let deleteArr = [...deleteImage]
+  let deleteArr = [...deleteImage];
 
   const removeImage = (index) => {
-    deleteArr.push(index)
-    setDelete(deleteArr)
-    const wasMain = images[index]?.isMain;
-    let next = images.filter((_, i) => i !== index);
-    if (wasMain && next.length > 0) next[0] = { ...next[0], isMain: true };
-    onChange(next);
+    console.log(index);
+    deleteArr.push(index);
+    setDelete(deleteArr);
+    // const wasMain = images[index]?.isMain;
+    // let next = images.filter((_, i) => i !== index);
+    // if (wasMain && next.length > 0) next[0] = { ...next[0], isMain: true };
+    // onChange(next);
   };
 
   const setMain = (index) => {
@@ -52,12 +53,19 @@ export default function ImageUploader({
         {images.map((img, i) => (
           <div
             key={i}
-            className="relative aspect-square rounded-lg overflow-hidden border border-ink/10 group"
+            className={`relative aspect-square rounded-lg overflow-hidden border border-ink/10 group ${deleteImage.includes(i) && "hidden"}`}
           >
             <img
-              src={img.preview || `http://localhost:5000/${img.url}`}
+              // src={img.preview || `http://localhost:5000/${img.url}`}
+              src={
+                img.preview
+                  ? img.preview
+                  : img.url.includes("https")
+                    ? img.url
+                    : `http://localhost:5000/${img.url}`
+              }
               alt={`Product ${i + 1}`}
-              className="w-full h-full object-cover"
+              className={`w-full h-full object-cover `}
             />
 
             <button
