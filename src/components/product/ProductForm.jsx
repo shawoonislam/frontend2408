@@ -7,6 +7,7 @@ import axios from "axios";
 import { useParams } from "react-router";
 
 const statusOptions = ["pending", "active", "inactive"];
+const sectionOptions = ["none","deals", "feature", "new"];
 const discountTypes = ["none", "percentage", "flat"];
 
 export default function ProductForm({
@@ -24,7 +25,8 @@ export default function ProductForm({
     }
     fetchCategories();
   }, []);
-
+  
+  
   const [form, setForm] = useState({
     title: initialData?.title || "",
     // sku: initialData?.sku || "",
@@ -43,8 +45,18 @@ export default function ProductForm({
     discountEndDate: initialData?.discountEndDate || "",
     images: initialData?.images || "",
     isMain: initialData?.isMain,
+    section: initialData?.section,
   });
-  let [isMainIndex, setIsMainIndex] = useState(0);
+  let [isMainIndex, setIsMainIndex] = useState();
+
+
+  useEffect(()=>{
+    initialData?.images.map((item,index)=>{
+    if(item.isMain == true){
+      setIsMainIndex(index)
+    }
+  })
+  },[])
 
   const [images, setImages] = useState(
     initialData?.images?.map((img) => ({ url: img.url, isMain: img.isMain })) ||
@@ -75,6 +87,7 @@ export default function ProductForm({
   }, [form.price, form.discountType, form.discount]);
 
   const validate = () => {
+    console.log(Boolean(isMainIndex))
     const errs = {};
     if (!form.title.trim()) errs.title = "Product title is required";
     // if (!form.sku.trim()) errs.sku = "SKU is required";
@@ -90,6 +103,7 @@ export default function ProductForm({
     ) {
       errs.discount = "Enter a discount value";
     }
+   
     return errs;
   };
   let params = useParams();
@@ -213,7 +227,27 @@ export default function ProductForm({
               ))}
             </select>
           </div>
+           <div>
+            <label className="text-sm font-medium text-ink block mb-1.5">
+              Section
+            </label>
+            <select
+              name="section"
+              value={form.section}
+              onChange={handleChange}
+              className="w-full px-3.5 py-2.5 rounded-lg border border-ink/15 bg-white text-sm capitalize
+                focus:outline-none focus:ring-4 focus:ring-amber/15 focus:border-amber transition-all"
+            >
+              {sectionOptions.map((s) => (
+                <option key={s} value={s} className="capitalize">
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+
+        
 
         <div className="mt-4">
           <label className="text-sm font-medium text-ink block mb-1.5">
