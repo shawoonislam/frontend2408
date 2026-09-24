@@ -8,6 +8,8 @@ import HeroProductSlider from "../../components/product/HeroProductSlider";
 
 import { categories } from "../../utils/mockCategories";
 import CategoryGrid from "../../components/product/CategoryGrid";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 // const categories = [
 //     { name: "Electronics", image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400" },
@@ -28,6 +30,15 @@ const trustPoints = [
 export default function Home() {
     const featured = mockProducts.slice(0, 4);
     const newArrivals = [...mockProducts].reverse().slice(0, 4);
+    let [product,setProduct] = useState([])
+
+    useEffect(()=>{
+        async function pro(){
+            let pro = await axios.get('http://localhost:5000/get-all-products')
+            setProduct(pro.data.product)
+        }
+        pro()
+    },[])
 
     return (
         <div>
@@ -41,7 +52,7 @@ export default function Home() {
                         <div className="max-w-xl">
                             <p className="text-amber text-sm font-semibold tracking-wide uppercase mb-3">New Season Arrivals</p>
                             <h1 className="font-display text-4xl sm:text-5xl font-semibold text-paper leading-tight">
-                                Everything you need, delivered to your door.
+                                Everything you need, delivered to your door. asd
                             </h1>
                             <p className="text-paper/60 text-base mt-4 max-w-md">
                                 Shop electronics, fashion, home essentials, and more — all in one place, with fast delivery across Bangladesh.
@@ -56,7 +67,7 @@ export default function Home() {
 
                         {/* Right: rotating product showcase */}
                         <div className="hidden lg:block">
-                            <HeroProductSlider products={mockOffers} />
+                            <HeroProductSlider products={product} />
                         </div>
                     </div>
                 </div>
@@ -79,7 +90,7 @@ export default function Home() {
 
             {/* Today's Deals slider */}
             <OfferSlider
-                products={mockOffers}
+                products={product}
                 title="Today's Deals"
                 subtitle="Limited-time offers — grab them before they're gone"
             />

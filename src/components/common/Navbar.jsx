@@ -3,12 +3,14 @@ import { Link, NavLink, useNavigate, useLocation, useSearchParams } from "react-
 import { ShoppingCart, User, Menu, X, Search, ChevronDown } from "./Icons";
 import { useCart } from "../../context/CartContext";
 import { categories } from "../../utils/mockCategories";
+import axios from "axios";
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [openMobileCat, setOpenMobileCat] = useState(null);
     const [hoveredCat, setHoveredCat] = useState(null);
+    const [cat,setCat] = useState([])
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -18,6 +20,15 @@ export default function Navbar() {
     useEffect(()=>{
         let data = JSON.parse(localStorage.getItem('userinfo'))
         setUserInfo(data)
+        
+
+        async function cat(){
+            let cate = await axios.get('http://localhost:5000/getcategory')
+            setCat(cate.data.categories)
+        }
+
+        cat()
+
     },[])
 
     const activeCategoryParam = searchParams.get("category");
@@ -127,7 +138,7 @@ export default function Navbar() {
                             All Products
                         </NavLink>
 
-                        {categories.map((cat) => {
+                        {cat?.map((cat) => {
                             const isActiveTab = activeCategoryParam === cat.name;
                             return (
                                 <div
@@ -146,19 +157,7 @@ export default function Navbar() {
                                         {cat.name}
                                     </Link>
 
-                                    {hoveredCat === cat.name && (
-                                        <div className="absolute top-full left-0 bg-white border border-ink/10 rounded-lg shadow-lg min-w-[190px] py-1.5 z-20">
-                                            {cat.subcategories.map((sub) => (
-                                                <Link
-                                                    key={sub}
-                                                    to={`/products?category=${encodeURIComponent(cat.name)}&sub=${encodeURIComponent(sub)}`}
-                                                    className="block px-4 py-2 text-sm text-ink/70 hover:text-amber hover:bg-ink/[0.03] transition-colors"
-                                                >
-                                                    {sub}
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    )}
+                                
                                 </div>
                             );
                         })}
