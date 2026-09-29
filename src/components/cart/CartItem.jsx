@@ -2,44 +2,47 @@ import { Link } from "react-router";
 import { Trash2 } from "../common/Icons";
 import QuantitySelector from "./QuantitySelector";
 import { useCart } from "../../context/CartContext";
+import { useEffect, useState } from "react";
+import CartSummary from "./CartSummary";
 
 export default function CartItem({ items }) {
- console.log(items)
+
+    let[totalPri,setTotalPri] = useState()
+    useEffect(()=>{
+       if(items?.totalCartPrice){
+        setTotalPri(items?.totalCartPrice)
+       } 
+    },[items?.totalCartPrice])
     return (
-        <>
-        {items?.cart?.map(item=>(
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="px-5 bg-white border lg:col-span-2 rounded-xl border-ink/10">
+            {items?.cart?.map(item=>(
  <div className="flex gap-4 py-5 border-b border-ink/10 last:border-0">
-            <Link to={`/products/${item.product.productId}`} className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden bg-ink/5 shrink-0">
-                <img src={`http://localhost:5000/${item.product.images[0].url}`} alt={item.product.title} className="w-full h-full object-cover" />
+            <Link to={`/products/${item.product.productId}`} className="w-20 h-20 overflow-hidden rounded-lg sm:w-24 sm:h-24 bg-ink/5 shrink-0">
+                <img src={`http://localhost:5000/${item.product.images[0].url}`} alt={item.product.title} className="object-cover w-full h-full" />
             </Link>
 
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between gap-3">
-                    <Link to={`/products/${item.product.productId}`} className="text-sm font-semibold text-ink hover:text-amber transition-colors line-clamp-2">
-                        {item.product.title}
+                    <Link to={`/products/${item.product.productId}`} className="text-sm font-semibold transition-colors text-ink hover:text-amber line-clamp-2">
+                        {item.product.title}  {item.product._id}
                     </Link>
                     <button
                         onClick={() => removeFromCart(item.product.productId)}
                         // disabled={pending}
-                        className="text-slate/50 hover:text-red-500 transition-colors shrink-0 disabled:opacity-30"
+                        className="transition-colors text-slate/50 hover:text-red-500 shrink-0 disabled:opacity-30"
                         aria-label="Remove item"
                     >
                         <Trash2 size={16} />
                     </button>
                 </div>
 
-                <p className="text-sm text-slate mt-1">৳{item.product.price}</p>
+                <p className="mt-1 text-sm text-slate">৳{item.product.price}</p>
 
                 <div className="flex items-center justify-between mt-3">
-                    <QuantitySelector
-                        value={item.quantity}
-                        onIncrement={() => incrementQuantity(item.productId)}
-                        onDecrement={() => decrementQuantity(item.productId)}
-                        // disabled={pending}
-                    />
-                    <span className="font-display text-base font-semibold text-ink">
-                        ৳{(item.product.price * item.quantity).toLocaleString()}
-                    </span>
+                    <QuantitySelector id={item._id} quantity={item.quantity} price={item.product.price} totalPri={totalPri} setTotalPri={setTotalPri}/>
+                   
+                   
                 </div>
 
                 {item.quantity >= item.product.stock && (
@@ -51,8 +54,12 @@ export default function CartItem({ items }) {
         </div>
         ))}
        
-        <h1 className="tex-xl bg-amber-200 text-black font-bold">Total: {items.totalCartPrice} </h1>
+        <h1 className="font-bold text-black tex-xl bg-amber-200">Total: {totalPri}  </h1>
+        </div>
+        <div>
+            <CartSummary subtotal={totalPri} itemCount={items?.cart?.length} />
+        </div>
 
-        </>
+        </div>
     );
 };

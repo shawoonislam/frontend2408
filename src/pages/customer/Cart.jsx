@@ -22,11 +22,11 @@ let [items,setItems] = useState([])
    },[])
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <h1 className="font-display text-3xl font-semibold text-ink mb-6">Shopping Cart</h1>
+        <div className="px-4 py-10 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <h1 className="mb-6 text-3xl font-semibold font-display text-ink">Shopping Cart</h1>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 bg-white rounded-xl border border-ink/10 px-5">
+            <div >
+                <div >
                     
                         <CartItem  items={items} />
                        
@@ -35,7 +35,7 @@ let [items,setItems] = useState([])
                 </div>
 
                 {/* <div>
-                    <CartSummary subtotal={subtotal} itemCount={totalItems} />
+                    <CartSummary subtotal={140} itemCount={1200} />
                 </div> */}
             </div>
         </div>

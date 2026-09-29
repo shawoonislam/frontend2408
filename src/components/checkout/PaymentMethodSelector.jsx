@@ -2,15 +2,13 @@ import { CreditCard, Check } from "../common/Icons";
 
 const methods = [
     { id: "cod", label: "Cash on Delivery", desc: "Pay when your order arrives" },
-    { id: "bkash", label: "bKash", desc: "Pay via bKash mobile banking" },
-    { id: "nagad", label: "Nagad", desc: "Pay via Nagad mobile banking" },
-    { id: "card", label: "Debit / Credit Card", desc: "Visa, Mastercard, and more" },
+    { id: "amaarPay", label: "amaarPay", desc: "Pay via amaarPay mobile banking" },
 ];
 
 export default function PaymentMethodSelector({ selected, onChange }) {
     return (
-        <div className="bg-white rounded-xl border border-ink/10 p-5 sm:p-6">
-            <h2 className="font-display text-lg font-semibold text-ink mb-5">Payment Method</h2>
+        <div className="p-5 bg-white border rounded-xl border-ink/10 sm:p-6">
+            <h2 className="mb-5 text-lg font-semibold font-display text-ink">Payment Method</h2>
 
             <div className="flex flex-col gap-3">
                 {methods.map((method) => (

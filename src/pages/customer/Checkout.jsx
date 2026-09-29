@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router";
+import { useNavigate, Link, useSearchParams } from "react-router";
 import { useCart } from "../../context/CartContext";
 import AddressForm from "../../components/checkout/AddressForm";
 import PaymentMethodSelector from "../../components/checkout/PaymentMethodSelector";
@@ -7,8 +7,11 @@ import OrderSummary from "../../components/checkout/OrderSummary";
 import Button from "../../components/common/Button";
 
 export default function Checkout() {
-    const { items, subtotal, clearCart } = useCart();
+    // const { items, subtotal, clearCart } = useCart();
     const navigate = useNavigate();
+    let [searchParams] = useSearchParams()
+    console.log("params",searchParams.get('subTotal'))
+    console.log("params",searchParams.get('itemCount'))
 
     const [form, setForm] = useState({
         fullName: "", phone: "", address: "", city: "", postalCode: "", notes: "",
@@ -40,13 +43,13 @@ export default function Checkout() {
 
         setPlacing(true);
         // TODO: connect to POST /payment with { form, paymentMethod, items, total }
-        console.log("Place order:", { form, paymentMethod, items, subtotal });
+        // console.log("Place order:", { form, paymentMethod, items, subtotal });
 
         setTimeout(() => {
             setPlacing(false);
             const success = Math.random() > 0.15; // simulated outcome until real payment gateway is wired
             if (success) {
-                clearCart();
+                // clearCart();
                 navigate("/order-success");
             } else {
                 navigate("/order-failed");
@@ -54,37 +57,24 @@ export default function Checkout() {
         }, 1200);
     };
 
-    if (items.length === 0) {
-        return (
-            <div className="max-w-7xl mx-auto px-4 py-24 text-center">
-                <h1 className="font-display text-2xl font-semibold text-ink">Your cart is empty</h1>
-                <p className="text-slate text-sm mt-2">Add something to your cart before checking out.</p>
-                <Link
-                    to="/products"
-                    className="inline-block mt-6 px-6 py-2.5 rounded-lg bg-ink text-paper text-sm font-semibold hover:bg-ink/90 transition-colors"
-                >
-                    Browse Products
-                </Link>
-            </div>
-        );
-    }
+  
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <h1 className="font-display text-3xl font-semibold text-ink mb-6">Checkout</h1>
+        <div className="px-4 py-10 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <h1 className="mb-6 text-3xl font-semibold font-display text-ink">Checkout</h1>
 
-            <form onSubmit={handlePlaceOrder} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 flex flex-col gap-6">
+            <form onSubmit={handlePlaceOrder} className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                <div className="flex flex-col gap-6 lg:col-span-2">
                     <AddressForm form={form} errors={errors} onChange={handleChange} />
                     <PaymentMethodSelector selected={paymentMethod} onChange={setPaymentMethod} />
                 </div>
 
                 <div className="flex flex-col gap-4">
-                    <OrderSummary items={items} subtotal={subtotal} />
+                    <OrderSummary items={searchParams.get('itemCount')} subtotal={searchParams.get('subTotal')} />
                     <Button type="submit" variant="accent" loading={placing}>
                         Place Order
                     </Button>
-                    <p className="text-xs text-slate/60 text-center">
+                    <p className="text-xs text-center text-slate/60">
                         By placing this order, you agree to our terms of service.
                     </p>
                 </div>
