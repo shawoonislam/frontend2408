@@ -17,6 +17,15 @@ export default function AddressForm({ form, errors, onChange }) {
                     placeholder="Jane Doe"
                 />
                 <InputField
+                    label="Email"
+                    name="email"
+                    icon={User}
+                    value={form.email}
+                    onChange={onChange}
+                    error={errors.email}
+                    placeholder="Jane Doe"
+                />
+                <InputField
                     label="Phone number"
                     name="phone"
                     icon={Phone}

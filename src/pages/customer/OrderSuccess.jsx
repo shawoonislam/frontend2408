@@ -1,8 +1,11 @@
 import { Link } from "react-router";
 import { Check, Package } from "../../components/common/Icons";
+import { useEffect } from "react";
 
 export default function OrderSuccess() {
     const orderNumber = `LC${Math.floor(100000 + Math.random() * 900000)}`;
+
+  
 
     return (
         <div className="max-w-lg mx-auto px-4 py-24 text-center">
